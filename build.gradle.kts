@@ -30,7 +30,6 @@ dependencies {
     // dependency for OpenAPI documentation
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10")
 
-    runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
 
     // Exclude mockito-core from spring-boot-starter-test
