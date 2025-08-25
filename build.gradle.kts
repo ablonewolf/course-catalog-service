@@ -51,3 +51,12 @@ allOpen {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+sourceSets {
+    test {
+        java {
+            srcDir("src/test/unit")
+            srcDir("src/test/integration")
+        }
+    }
+}
