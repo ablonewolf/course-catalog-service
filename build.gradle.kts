@@ -27,15 +27,22 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-    // dependencies for OpenAPI documentation
+    // dependency for OpenAPI documentation
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.10")
+
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    // Exclude mockito-core from spring-boot-starter-test
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.mockito", module = "mockito-core")
+        exclude(group = "org.mockito", module = "mockito-junit-jupiter")
+    }
+
     testImplementation("org.springframework.boot:spring-boot-starter-webflux")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 
-    // https://mvnrepository.com/artifact/org.mockito.kotlin/mockito-kotlin
+    // we are using mockito-kotlin instead of mockito-core since it provides a better kotlin support
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
