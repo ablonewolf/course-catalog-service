@@ -1,7 +1,9 @@
 package org.ablonewolf.coursecatalogservice.controller
 
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
+import org.ablonewolf.coursecatalogservice.model.dto.request.CourseSearchDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
+import org.ablonewolf.coursecatalogservice.model.dto.response.PageData
 import org.ablonewolf.coursecatalogservice.service.CourseService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -25,5 +27,12 @@ class CourseController(
         log.info("Creating new course with name ${courseCreateDTO.name}")
         val createdCourse = courseService.createNewCourse(courseCreateDTO)
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(createdCourse)
+    }
+
+    @PostMapping("/get-all")
+    fun getAllCourses(@RequestBody courseSearchDTO: CourseSearchDTO): ResponseEntity<PageData<CourseResponseDTO>> {
+        log.info("Fetching all course existing courses")
+        val courses = courseService.getAllCourses(courseSearchDTO)
+        return ResponseEntity.status(HttpStatus.OK.value()).body(courses)
     }
 }
