@@ -1,11 +1,14 @@
 package org.ablonewolf.coursecatalogservice.service.impl
 
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
+import org.ablonewolf.coursecatalogservice.model.dto.request.CourseSearchDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
+import org.ablonewolf.coursecatalogservice.model.dto.response.PageData
 import org.ablonewolf.coursecatalogservice.model.entity.Course
 import org.ablonewolf.coursecatalogservice.repository.CourseRepository
 import org.ablonewolf.coursecatalogservice.service.CourseService
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
@@ -35,5 +38,16 @@ class CourseServiceImpl(
                 override val description: String? = it.description
             }
         }
+    }
+
+    override fun getAllCourses(courseSearchDTO: CourseSearchDTO): PageData<CourseResponseDTO> {
+        val pageable = PageRequest.of(courseSearchDTO.pageNumber - 1, courseSearchDTO.pageSize)
+        val coursePage = courseRepository.getAllCourses(pageable, courseSearchDTO)
+        return PageData(
+            contents = coursePage.content,
+            currentPage = coursePage.number + 1,
+            totalElements = coursePage.totalElements,
+            totalPages = coursePage.totalPages
+        )
     }
 }

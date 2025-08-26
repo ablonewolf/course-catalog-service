@@ -1,9 +1,13 @@
 package org.ablonewolf.coursecatalogservice.service
 
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
+import org.ablonewolf.coursecatalogservice.model.dto.request.CourseSearchDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
+import org.ablonewolf.coursecatalogservice.model.dto.response.PageData
 
 interface CourseService {
 
     fun createNewCourse(courseCreateDTO: CourseCreateDTO) : CourseResponseDTO
+
+    fun getAllCourses(courseSearchDTO: CourseSearchDTO): PageData<CourseResponseDTO>
 }
