@@ -12,8 +12,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
-class CourseServiceImpl(
-    private val courseRepository: CourseRepository) : CourseService {
+class CourseServiceImpl(private val courseRepository: CourseRepository) : CourseService {
 
     companion object {
         private val log = LoggerFactory.getLogger(CourseServiceImpl::class.java)
@@ -24,7 +23,8 @@ class CourseServiceImpl(
             Course(
                 name = it.name,
                 category = it.category,
-                description = it.description)
+                description = it.description
+            )
         }
 
         courseRepository.save(course)
