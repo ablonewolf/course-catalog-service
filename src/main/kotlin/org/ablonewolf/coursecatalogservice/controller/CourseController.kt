@@ -74,6 +74,14 @@ class CourseController(
 		return ResponseEntity.status(HttpStatus.CREATED.value()).build<Unit>()
 	}
 
+	@GetMapping("/{id}")
+	@Operation(summary = "Get a course by its id")
+	fun getCourseById(@PathVariable id: Int): ResponseEntity<CourseResponseDTO> {
+		log.info("Fetching course with id: $id")
+		val course = courseService.getCourseById(id)
+		return ResponseEntity.ok(course)
+	}
+
 	@DeleteMapping("/{id}")
 	@Operation(summary = "Delete a course by its id")
 	fun deleteCourse(@PathVariable id: Int): ResponseEntity<Unit> {
