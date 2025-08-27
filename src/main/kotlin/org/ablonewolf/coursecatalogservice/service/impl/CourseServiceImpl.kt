@@ -52,10 +52,7 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 		)
 	}
 
-	override fun updateCourse(
-		id: Int,
-		courseUpdateDTO: CourseUpdateDTO
-	): CourseResponseDTO {
+	override fun updateCourse(id: Int, courseUpdateDTO: CourseUpdateDTO): CourseResponseDTO {
 		val existingCourse = courseRepository.findById(id)
 			.orElseThrow { IllegalArgumentException("Course with id $id not found") }
 
@@ -77,8 +74,7 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 		}
 	}
 
-	override fun createMultipleCourses(
-		courseCreateDTOs: List<CourseCreateDTO>) {
+	override fun createMultipleCourses(courseCreateDTOs: List<CourseCreateDTO>) {
 		val createdCourses = mutableListOf<Course>()
 
 		courseCreateDTOs.forEach {
@@ -92,6 +88,14 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 
 		courseRepository.saveAll(createdCourses)
 		log.info("Created ${createdCourses.size} new courses")
+	}
+
+	override fun deleteCourse(id: Int) {
+		if (!courseRepository.existsById(id)) {
+			throw IllegalArgumentException("Course with id $id not found")
+		}
+		courseRepository.deleteById(id)
+		log.info("Deleted course with id: $id")
 	}
 }
 
