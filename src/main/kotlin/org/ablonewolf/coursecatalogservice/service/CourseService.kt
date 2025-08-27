@@ -16,5 +16,7 @@ interface CourseService {
 
 	fun createMultipleCourses(courseCreateDTOs: List<CourseCreateDTO>)
 
+	fun getCourseById(id: Int): CourseResponseDTO
+
 	fun deleteCourse(id: Int)
 }

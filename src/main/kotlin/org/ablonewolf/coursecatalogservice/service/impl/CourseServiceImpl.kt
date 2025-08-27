@@ -90,6 +90,10 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 		log.info("Created ${createdCourses.size} new courses")
 	}
 
+	override fun getCourseById(id: Int): CourseResponseDTO {
+		return courseRepository.getCourseById(id)
+	}
+
 	override fun deleteCourse(id: Int) {
 		if (!courseRepository.existsById(id)) {
 			throw IllegalArgumentException("Course with id $id not found")
