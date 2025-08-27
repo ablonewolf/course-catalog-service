@@ -19,6 +19,7 @@ class GreetingControllerIntegrationTest {
     @Test
     fun retrieveGreeting() {
         val name = "Arka Bhuiyan"
+        val expectedMessage = "Hello there $name, welcome to the Course Catalog Service!"
 
         val result = webTestClient.get()
             .uri("/greetings?name=$name")
@@ -27,6 +28,6 @@ class GreetingControllerIntegrationTest {
             .expectBody(String::class.java)
             .returnResult()
 
-        Assertions.assertEquals("Hello there $name, welcome to the Course Catalog Service!", result.responseBody)
+        Assertions.assertEquals(expectedMessage, result.responseBody)
     }
 }
