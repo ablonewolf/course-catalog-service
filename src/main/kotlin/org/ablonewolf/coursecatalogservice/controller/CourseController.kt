@@ -1,5 +1,6 @@
 package org.ablonewolf.coursecatalogservice.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseSearchDTO
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseUpdateDTO
@@ -26,6 +27,7 @@ class CourseController(
 	}
 
 	@PostMapping
+	@Operation(summary = "Add a new course")
 	fun createCourse(@RequestBody courseCreateDTO: CourseCreateDTO): ResponseEntity<CourseResponseDTO> {
 		log.info("Creating new course with name ${courseCreateDTO.name}")
 		val createdCourse = courseService.createNewCourse(courseCreateDTO)
@@ -33,6 +35,7 @@ class CourseController(
 	}
 
 	@PostMapping("/get-all")
+	@Operation(summary = "Get all courses, with pagination and optional filtering by name and category")
 	fun getAllCourses(@RequestBody courseSearchDTO: CourseSearchDTO): ResponseEntity<PageData<CourseResponseDTO>> {
 		log.info("Fetching all course existing courses")
 		val courses = courseService.getAllCourses(courseSearchDTO)
@@ -40,6 +43,7 @@ class CourseController(
 	}
 
 	@PutMapping("/{id}")
+	@Operation(summary = "Update an existing course by its id")
 	fun updateCourse(
 		@PathVariable id: Int,
 		@RequestBody courseUpdateDTO: CourseUpdateDTO
@@ -51,6 +55,7 @@ class CourseController(
 	}
 
 	@PostMapping("/batch")
+	@Operation(summary = "Create multiple new courses in a single request")
 	fun createMultipleCourses(
 		@RequestBody courseCreateDTOs: List<CourseCreateDTO>): ResponseEntity<Unit> {
 		log.info("Creating multiple new courses, count: ${courseCreateDTOs.size}")
