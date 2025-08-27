@@ -62,6 +62,7 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 		existingCourse?.let { course ->
 			course.name = courseUpdateDTO.name ?: course.name
 			course.category = courseUpdateDTO.category ?: course.category
+			course.description = courseUpdateDTO.description ?: course.description
 		}
 		courseRepository.save(existingCourse)
 		log.info("Updated course with id: $id")
