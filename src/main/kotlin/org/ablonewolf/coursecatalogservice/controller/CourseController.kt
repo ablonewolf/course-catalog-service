@@ -11,11 +11,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -35,12 +37,20 @@ class CourseController(
 		return ResponseEntity.status(HttpStatus.CREATED.value()).body(createdCourse)
 	}
 
-	@PostMapping("/get-all")
+	@GetMapping
 	@Operation(summary = "Get all courses, with pagination and optional filtering by name and category")
-	fun getAllCourses(@RequestBody courseSearchDTO: CourseSearchDTO): ResponseEntity<PageData<CourseResponseDTO>> {
-		log.info("Fetching all course existing courses")
+	fun getAllCourses(@RequestParam(defaultValue = "1") page: Int,
+					  @RequestParam(defaultValue = "10") size: Int,
+					  @RequestParam(required = false) name: String?,
+					  @RequestParam(required = false) category: String?): ResponseEntity<PageData<CourseResponseDTO>> {
+		log.info("Fetching all courses - page: $page, size: $size")
+		val courseSearchDTO = CourseSearchDTO(
+			pageNumber = page,
+			pageSize = size,
+			name = name,
+			category = category)
 		val courses = courseService.getAllCourses(courseSearchDTO)
-		return ResponseEntity.status(HttpStatus.OK.value()).body(courses)
+		return ResponseEntity.ok(courses)
 	}
 
 	@PutMapping("/{id}")
