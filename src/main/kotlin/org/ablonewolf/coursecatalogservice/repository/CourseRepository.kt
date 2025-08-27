@@ -28,4 +28,17 @@ interface CourseRepository : JpaRepository<Course, Int> {
     fun getAllCourses(
         pageable: Pageable, @Param("searchDTO") courseSearchDTO: CourseSearchDTO
     ): Page<CourseResponseDTO>
+
+    @Query(
+        value = """
+    SELECT 
+        course.id AS id, 
+        course.name AS name, 
+        course.category AS category, 
+        course.description AS description 
+    FROM Course course
+    WHERE
+        course.id = :id"""
+    )
+    fun getCourseById(@Param("id") id: Int): CourseResponseDTO
 }
