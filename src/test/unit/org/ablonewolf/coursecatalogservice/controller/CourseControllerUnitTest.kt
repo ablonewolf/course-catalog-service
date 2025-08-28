@@ -27,13 +27,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class CourseControllerUnitTest {
 
 	@Autowired
-	lateinit var mockMvc: MockMvc
+	private lateinit var mockMvc: MockMvc
 
 	@MockitoBean
-	lateinit var courseService: CourseService
+	private lateinit var courseService: CourseService
 
 	@Autowired
-	lateinit var objectMapper: ObjectMapper
+	private lateinit var objectMapper: ObjectMapper
 
 	private lateinit var name: String
 	private lateinit var category: String
