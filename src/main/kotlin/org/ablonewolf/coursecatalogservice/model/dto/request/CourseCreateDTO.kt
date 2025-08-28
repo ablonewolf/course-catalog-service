@@ -1,17 +1,17 @@
 package org.ablonewolf.coursecatalogservice.model.dto.request
 
-import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 
 data class CourseCreateDTO(
-    @NotBlank(message = "Name cannot be empty")
-    @Max(64)
+    @field:NotBlank(message = "Name cannot be empty")
+    @field:Size(max = 64, message = "Name must be between 9 and 64 characters")
     val name: String,
 
-    @NotBlank(message = "category cannot be empty")
-    @Max(32, message = "Max length for category is 32 characters")
+    @field:NotBlank(message = "Category cannot be empty")
+    @field:Size(max = 32, message = "Max length for category is 32 characters")
     val category: String,
 
-    @NotBlank(message = "description cannot be empty")
+    @field:NotBlank(message = "Description cannot be empty")
     val description: String
 )
