@@ -10,6 +10,7 @@ import org.ablonewolf.coursecatalogservice.service.CourseService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,7 +32,7 @@ class CourseController(
 
 	@PostMapping
 	@Operation(summary = "Add a new course")
-	fun createCourse(@RequestBody courseCreateDTO: CourseCreateDTO): ResponseEntity<CourseResponseDTO> {
+	fun createCourse(@Validated @RequestBody courseCreateDTO: CourseCreateDTO): ResponseEntity<CourseResponseDTO> {
 		log.info("Creating new course with name ${courseCreateDTO.name}")
 		val createdCourse = courseService.createNewCourse(courseCreateDTO)
 		return ResponseEntity.status(HttpStatus.CREATED.value()).body(createdCourse)
@@ -57,7 +58,7 @@ class CourseController(
 	@Operation(summary = "Update an existing course by its id")
 	fun updateCourse(
 		@PathVariable id: Int,
-		@RequestBody courseUpdateDTO: CourseUpdateDTO
+		@Validated @RequestBody courseUpdateDTO: CourseUpdateDTO
 	): ResponseEntity<CourseResponseDTO> {
 		log.info("Updating course with id: $id")
 		val updatedCourse = courseService.updateCourse(id, courseUpdateDTO)
@@ -68,7 +69,8 @@ class CourseController(
 	@PostMapping("/batch")
 	@Operation(summary = "Create multiple new courses in a single request")
 	fun createMultipleCourses(
-		@RequestBody courseCreateDTOs: List<CourseCreateDTO>): ResponseEntity<Unit> {
+		@Validated @RequestBody courseCreateDTOs: List<CourseCreateDTO>
+	): ResponseEntity<Unit> {
 		log.info("Creating multiple new courses, count: ${courseCreateDTOs.size}")
 		courseService.createMultipleCourses(courseCreateDTOs)
 		return ResponseEntity.status(HttpStatus.CREATED.value()).build<Unit>()
