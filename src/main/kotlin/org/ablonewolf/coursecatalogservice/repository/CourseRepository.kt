@@ -13,24 +13,25 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CourseRepository : JpaRepository<Course, Int> {
 
-    @Query(
-        value = """
+	@Query(
+		value = """
     SELECT 
-        course.id AS id, 
-        course.name AS name, 
-        course.category AS category, 
-        course.description AS description 
+        course.id AS id,
+        course.name AS name,
+        course.category AS category,
+        course.description AS description
     FROM Course course
     WHERE
-        (:#{#searchDTO.name} IS NULL OR course.name LIKE CONCAT('%', :#{#searchDTO.name}, '%'))
-        AND (:#{#searchDTO.category} IS NULL OR course.category LIKE CONCAT('%', :#{#searchDTO.category}, '%'))"""
-    )
-    fun getAllCourses(
-        pageable: Pageable, @Param("searchDTO") courseSearchDTO: CourseSearchDTO
-    ): Page<CourseResponseDTO>
+        (:#{#searchDTO.name} IS NULL OR LOWER(course.name) LIKE CONCAT('%', LOWER(:#{#searchDTO.name}), '%'))
+        AND (:#{#searchDTO.category} IS NULL OR 
+        LOWER(course.category) LIKE CONCAT('%', LOWER(:#{#searchDTO.category}) , '%'))"""
+	)
+	fun getAllCourses(
+		pageable: Pageable, @Param("searchDTO") courseSearchDTO: CourseSearchDTO
+	): Page<CourseResponseDTO>
 
-    @Query(
-        value = """
+	@Query(
+		value = """
     SELECT 
         course.id AS id, 
         course.name AS name, 
@@ -39,6 +40,6 @@ interface CourseRepository : JpaRepository<Course, Int> {
     FROM Course course
     WHERE
         course.id = :id"""
-    )
-    fun getCourseById(@Param("id") id: Int): CourseResponseDTO
+	)
+	fun getCourseById(@Param("id") id: Int): CourseResponseDTO
 }
