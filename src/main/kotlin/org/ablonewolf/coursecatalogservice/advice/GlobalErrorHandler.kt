@@ -1,5 +1,6 @@
 package org.ablonewolf.coursecatalogservice.advice
 
+import org.ablonewolf.coursecatalogservice.exceptions.NotFoundException
 import org.ablonewolf.coursecatalogservice.model.dto.response.ErrorResponseDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
@@ -40,5 +42,15 @@ class GlobalErrorHandler : ResponseEntityExceptionHandler() {
 		)
 
 		return ResponseEntity.badRequest().body(response)
+	}
+
+	@ExceptionHandler(NotFoundException::class)
+	fun handleNotFoundException(ex: NotFoundException): ResponseEntity<ErrorResponseDTO> {
+		log.error("NotFoundException occurred, details: ${ex.message}")
+		val response = ErrorResponseDTO(
+			status = HttpStatus.NOT_FOUND.value(),
+			error = ex.message ?: "Resource not found"
+		)
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
 	}
 }
