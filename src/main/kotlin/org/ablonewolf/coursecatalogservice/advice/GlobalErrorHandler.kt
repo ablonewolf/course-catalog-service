@@ -37,7 +37,7 @@ class GlobalErrorHandler : ResponseEntityExceptionHandler() {
 
 		val response = ErrorResponseDTO(
 			status = HttpStatus.BAD_REQUEST.value(),
-			error = "Validation Failed",
+			message = "Validation Failed",
 			errors = errors
 		)
 
@@ -49,7 +49,7 @@ class GlobalErrorHandler : ResponseEntityExceptionHandler() {
 		log.error("NotFoundException occurred, details: ${ex.message}")
 		val response = ErrorResponseDTO(
 			status = HttpStatus.NOT_FOUND.value(),
-			error = ex.message ?: "Resource not found"
+			message = ex.message ?: "Resource not found"
 		)
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
 	}
