@@ -1,6 +1,7 @@
 package org.ablonewolf.coursecatalogservice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.ablonewolf.coursecatalogservice.exceptions.NotFoundException
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseUpdateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
@@ -277,6 +278,47 @@ class CourseControllerUnitTest {
 			.andExpect(
 				jsonPath("$.errors['description']")
 					.value("Description cannot be empty")
+			)
+	}
+
+	@Test
+	fun testGetCourseByIdFailure_WhenNonExistentIdProvided_ReturnsNotFound() {
+		// Arrange
+		whenever(courseService.getCourseById(999))
+			.thenThrow(NotFoundException("Course with id 999 not found"))
+
+		// Act & Assert
+		mockMvc.perform(get("/courses/999"))
+			.andExpect(status().isNotFound)
+			.andExpect(
+				jsonPath("$.message")
+					.value("Course with id 999 not found")
+			)
+	}
+
+	@Test
+	fun testUpdateCourseByIdFailure_WhenNonExistentIdProvided_ReturnsNotFound() {
+		// Arrange
+		val nonExistentId = 999
+		val courseUpdateDTO = CourseUpdateDTO(
+			name = "Advanced Kotlin",
+			category = "Programming",
+			description = null
+		)
+
+		whenever(courseService.updateCourse(nonExistentId, courseUpdateDTO))
+			.thenThrow(NotFoundException("Course with id 999 not found"))
+
+		// Act & Assert
+		mockMvc.perform(
+			put("/courses/$nonExistentId")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(courseUpdateDTO))
+		)
+			.andExpect(status().isNotFound)
+			.andExpect(
+				jsonPath("$.message")
+					.value("Course with id 999 not found")
 			)
 	}
 }
