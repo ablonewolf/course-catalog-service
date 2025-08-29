@@ -86,7 +86,8 @@ class CourseControllerUnitTest {
 	}
 
 	@Test
-	fun createCourse() {
+	fun test_courseCreateSuccess_WhenValidCreateDTOProvided_Returns201AndCourseDetails() {
+		// Arrange
 		val courseCreateDTO = CourseCreateDTO(
 			name = name,
 			category = category,
@@ -96,6 +97,7 @@ class CourseControllerUnitTest {
 		whenever(courseService.createNewCourse(courseCreateDTO))
 			.thenReturn(courseResponseDTO)
 
+		// Act & Assert
 		mockMvc.perform(
 			post("/courses")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +111,8 @@ class CourseControllerUnitTest {
 	}
 
 	@Test
-	fun getAllCourses() {
+	fun test_getAllCoursesSuccess_WhenValidFiltersProvided_Returns200AndPaginatedCourses() {
+		// Arrange
 		val pageData = PageData(
 			contents = listOf(courseResponseDTO),
 			totalElements = 1,
@@ -120,6 +123,7 @@ class CourseControllerUnitTest {
 		whenever(courseService.getAllCourses(any()))
 			.thenReturn(pageData)
 
+		// Act & Assert
 		mockMvc.perform(
 			get("/courses")
 				.param("page", "1")
@@ -134,7 +138,8 @@ class CourseControllerUnitTest {
 	}
 
 	@Test
-	fun updateCourse() {
+	fun test_courseUpdateSuccess_WhenValidIdAndUpdateDTOProvided_Returns200AndUpdatedCourse() {
+		// Arrange
 		val courseUpdateDTO = CourseUpdateDTO(
 			name = "Advanced Kotlin",
 			category = "Programming",
@@ -151,6 +156,7 @@ class CourseControllerUnitTest {
 		whenever(courseService.updateCourse(any(), any()))
 			.thenReturn(updatedCourseResponseDTO)
 
+		// Act & Assert
 		mockMvc.perform(
 			put("/courses/1")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -160,13 +166,18 @@ class CourseControllerUnitTest {
 			.andExpect(jsonPath("$.id").value(1))
 			.andExpect(jsonPath("$.name").value("Advanced Kotlin"))
 			.andExpect(jsonPath("$.category").value("Programming"))
-			.andExpect(jsonPath("$.description").value("Learn the nuts and bolts of Programming with Kotlin"))
+			.andExpect(
+				jsonPath("$.description")
+					.value("Learn the nuts and bolts of Programming with Kotlin")
+			)
 	}
 
 	@Test
-	fun createMultipleCourses() {
+	fun test_batchCreateSuccess_WhenValidCreateDTOListProvided_ReturnsHTTPStatus201() {
+		// Arrange
 		doNothing().whenever(courseService).createMultipleCourses(courseCreateDTOs)
 
+		// Act & Assert
 		mockMvc.perform(
 			post("/courses/batch")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -176,10 +187,12 @@ class CourseControllerUnitTest {
 	}
 
 	@Test
-	fun getCourseById() {
+	fun test_getCourseByIdSuccess_WhenValidIdProvided_Returns200AndCourseDetails() {
+		// Arrange
 		whenever(courseService.getCourseById(1))
 			.thenReturn(courseResponseDTO)
 
+		// Act & Assert
 		mockMvc.perform(get("/courses/1"))
 			.andExpect(status().isOk)
 			.andExpect(jsonPath("$.id").value(1))
@@ -189,9 +202,11 @@ class CourseControllerUnitTest {
 	}
 
 	@Test
-	fun deleteCourse() {
+	fun test_deleteCourseSuccess_WhenValidIdProvided_Returns204() {
+		// Arrange
 		doNothing().whenever(courseService).deleteCourse(1)
 
+		// Act & Assert
 		mockMvc.perform(delete("/courses/1"))
 			.andExpect(status().isNoContent)
 	}
