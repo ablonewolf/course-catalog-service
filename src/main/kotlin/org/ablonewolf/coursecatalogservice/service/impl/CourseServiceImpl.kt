@@ -1,5 +1,6 @@
 package org.ablonewolf.coursecatalogservice.service.impl
 
+import org.ablonewolf.coursecatalogservice.exceptions.NotFoundException
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseSearchDTO
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseUpdateDTO
@@ -54,7 +55,7 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 
 	override fun updateCourse(id: Int, courseUpdateDTO: CourseUpdateDTO): CourseResponseDTO {
 		val existingCourse = courseRepository.findById(id)
-			.orElseThrow { IllegalArgumentException("Course with id $id not found") }
+			.orElseThrow { NotFoundException("Course with id $id not found") }
 
 		existingCourse?.let { course ->
 			course.name = courseUpdateDTO.name ?: course.name
@@ -91,12 +92,15 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 	}
 
 	override fun getCourseById(id: Int): CourseResponseDTO {
+		if (!courseRepository.existsById(id)) {
+			throw NotFoundException("Course with id $id not found")
+		}
 		return courseRepository.getCourseById(id)
 	}
 
 	override fun deleteCourse(id: Int) {
 		if (!courseRepository.existsById(id)) {
-			throw IllegalArgumentException("Course with id $id not found")
+			throw NotFoundException("Course with id $id not found")
 		}
 		courseRepository.deleteById(id)
 		log.info("Deleted course with id: $id")
