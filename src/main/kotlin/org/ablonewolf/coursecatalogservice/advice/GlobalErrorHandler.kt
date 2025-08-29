@@ -1,6 +1,7 @@
 package org.ablonewolf.coursecatalogservice.advice
 
 import org.ablonewolf.coursecatalogservice.model.dto.response.ErrorResponseDTO
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -14,12 +15,17 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class GlobalErrorHandler : ResponseEntityExceptionHandler() {
 
+	companion object {
+		private val log = LoggerFactory.getLogger(GlobalErrorHandler::class.java)
+	}
+
 	override fun handleMethodArgumentNotValid(
 		ex: MethodArgumentNotValidException,
 		headers: HttpHeaders,
 		status: HttpStatusCode,
 		request: WebRequest
 	): ResponseEntity<in Any>? {
+		log.error("MethodArgumentNotValidException occurred, details: ${ex.message}", ex)
 		val errors = mutableMapOf<String, String>()
 		ex.bindingResult.allErrors.forEach { error ->
 			val fieldName = (error as FieldError).field
