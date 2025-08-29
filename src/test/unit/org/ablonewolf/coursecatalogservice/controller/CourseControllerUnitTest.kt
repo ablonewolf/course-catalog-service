@@ -210,4 +210,73 @@ class CourseControllerUnitTest {
 		mockMvc.perform(delete("/courses/1"))
 			.andExpect(status().isNoContent)
 	}
+
+	@Test
+	fun test_createCourseFailure_WhenEmptyNameProvided_ReturnsBadRequest() {
+		// Arrange
+		val invalidCourseCreateDTO = CourseCreateDTO(
+			name = "",  // Invalid: name is blank
+			category = category,
+			description = description
+		)
+
+		// Act & Assert
+		mockMvc.perform(
+			post("/courses")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(invalidCourseCreateDTO))
+		)
+			.andExpect(status().isBadRequest)
+			.andExpect(jsonPath("$.errors").exists())
+			.andExpect(
+				jsonPath("$.errors['name']")
+					.value("Name cannot be empty")
+			)
+	}
+
+	@Test
+	fun test_createCourseFailure_WhenEmptyCategoryProvided_ReturnsBadRequest() {
+		// Arrange
+		val invalidCourseCreateDTO = CourseCreateDTO(
+			name = name,
+			category = "",  // Invalid: category is blank
+			description = description
+		)
+
+		// Act & Assert
+		mockMvc.perform(
+			post("/courses")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(invalidCourseCreateDTO))
+		)
+			.andExpect(status().isBadRequest)
+			.andExpect(jsonPath("$.errors").exists())
+			.andExpect(
+				jsonPath("$.errors['category']")
+					.value("Category cannot be empty")
+			)
+	}
+
+	@Test
+	fun test_createCourseFailure_WhenEmptyDescriptionProvided_ReturnsBadRequest() {
+		// Arrange
+		val invalidCourseCreateDTO = CourseCreateDTO(
+			name = name,
+			category = category,
+			description = "" // Invalid: description is blank
+		)
+
+		// Act & Assert
+		mockMvc.perform(
+			post("/courses")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(invalidCourseCreateDTO))
+		)
+			.andExpect(status().isBadRequest)
+			.andExpect(jsonPath("$.errors").exists())
+			.andExpect(
+				jsonPath("$.errors['description']")
+					.value("Description cannot be empty")
+			)
+	}
 }
