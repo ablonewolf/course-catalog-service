@@ -53,4 +53,14 @@ class GlobalErrorHandler : ResponseEntityExceptionHandler() {
 		)
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
 	}
+
+	@ExceptionHandler(RuntimeException::class)
+	fun handleRuntimeException(ex: RuntimeException): ResponseEntity<ErrorResponseDTO> {
+		log.error("An internal server error occurred, details: ${ex.message}", ex)
+		val response = ErrorResponseDTO(
+			status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+			message = "An internal server error occurred"
+		)
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response)
+	}
 }
