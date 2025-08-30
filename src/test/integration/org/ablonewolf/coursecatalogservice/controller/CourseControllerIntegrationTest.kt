@@ -4,7 +4,10 @@ import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
 import org.ablonewolf.coursecatalogservice.util.PostgresContainerInitializer
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.MethodOrderer
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,6 +17,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 
 	@Autowired
@@ -24,6 +28,7 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 		private lateinit var category: String
 		private lateinit var description: String
 		private lateinit var courseResponseDTO: CourseResponseDTO
+		private lateinit var courseCreateDTO: CourseCreateDTO
 
 		@JvmStatic
 		@BeforeAll
@@ -38,17 +43,16 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 				override val category = this@Companion.category
 				override val description = this@Companion.description
 			}
+			courseCreateDTO = CourseCreateDTO(
+				"Kotlin Programming", "Programming",
+				"Learn the nuts and bolts of Programming with Kotlin"
+			)
 		}
 	}
 
 	@Test
+	@Order(1)
 	fun test_courseCreateSuccess_WhenValidCreateDTOProvided_Returns201AndCourseDetails() {
-		// Arrange
-		val courseCreateDTO = CourseCreateDTO(
-			"Kotlin Programming", "Programming",
-			"Learn the nuts and bolts of Programming with Kotlin"
-		)
-
 		// Act & Assert
 		webTestClient.post()
 			.uri("/courses")
@@ -63,6 +67,7 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 	}
 
 	@Test
+	@Order(2)
 	fun test_batchCreateSuccess_WhenValidCreateDTOListProvided_ReturnsHTTPStatus201() {
 		// Arrange
 		val courseCreateDTOs = listOf<CourseCreateDTO>(
