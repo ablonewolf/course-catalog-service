@@ -41,7 +41,6 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 		}
 	}
 
-
 	@Test
 	fun test_courseCreateSuccess_WhenValidCreateDTOProvided_Returns201AndCourseDetails() {
 		// Arrange
