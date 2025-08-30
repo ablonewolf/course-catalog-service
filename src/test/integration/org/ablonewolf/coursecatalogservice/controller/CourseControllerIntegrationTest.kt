@@ -1,5 +1,6 @@
 package org.ablonewolf.coursecatalogservice.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
 import org.ablonewolf.coursecatalogservice.util.PostgresContainerInitializer
@@ -22,6 +23,9 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 
 	@Autowired
 	lateinit var webTestClient: WebTestClient
+
+	@Autowired
+	private lateinit var objectMapper: ObjectMapper
 
 	companion object {
 		private lateinit var name: String
@@ -104,6 +108,43 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 			.bodyValue(courseCreateDTOs)
 			.exchange()
 			.expectStatus().isCreated
+	}
+
+
+	@Test
+	@Order(3)
+	fun test_getCourseByIdSuccess_WhenValidIdProvided_Returns200AndCourseDetails() {
+		// Arrange
+		val createResponse = webTestClient.post()
+			.uri("/courses")
+			.bodyValue(courseCreateDTO)
+			.exchange()
+			.expectStatus().isCreated
+			.expectBody()
+			.returnResult()
+
+		data class CourseResponse(
+			override val id: Int,
+			override val name: String,
+			override val category: String,
+			override val description: String
+		) : CourseResponseDTO
+
+		val createdCourse = objectMapper.readValue(
+			createResponse.responseBody,
+			CourseResponse::class.java
+		)
+
+		// Act & Assert
+		webTestClient.get()
+			.uri("/courses/${createdCourse.id}")
+			.exchange()
+			.expectStatus().isOk
+			.expectBody()
+			.jsonPath("$.name").isEqualTo(createdCourse.name)
+			.jsonPath("$.category").isEqualTo(createdCourse.category)
+			.jsonPath("$.description").isEqualTo(createdCourse.description)
+			.jsonPath("$.id").isEqualTo(createdCourse.id)
 	}
 
 }
