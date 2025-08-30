@@ -45,6 +45,12 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
+    testImplementation("org.testcontainers:junit-jupiter:1.21.3")
+
+    // https://mvnrepository.com/artifact/org.testcontainers/postgresql
+    testImplementation("org.testcontainers:postgresql:1.21.3")
 }
 
 kotlin {
