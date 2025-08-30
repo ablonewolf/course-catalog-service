@@ -62,4 +62,43 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 			.jsonPath("$.id").isEqualTo(1)
 	}
 
+	@Test
+	fun test_batchCreateSuccess_WhenValidCreateDTOListProvided_ReturnsHTTPStatus201() {
+		// Arrange
+		val courseCreateDTOs = listOf<CourseCreateDTO>(
+			CourseCreateDTO(
+				name = "Java Basics",
+				category = "Programming",
+				description = "Learn Java fundamentals and core concepts"
+			),
+			CourseCreateDTO(
+				name = "Spring Boot",
+				category = "Framework",
+				description = "Build enterprise applications with Spring Boot"
+			),
+			CourseCreateDTO(
+				name = "React Fundamentals",
+				category = "Frontend",
+				description = "Master React components and state management"
+			),
+			CourseCreateDTO(
+				name = "Docker Essentials",
+				category = "DevOps",
+				description = "Containerize applications with Docker"
+			),
+			CourseCreateDTO(
+				name = "MySQL Database",
+				category = "Database",
+				description = "Database design and SQL queries with MySQL"
+			)
+		)
+
+		// Act & Assert
+		webTestClient.post()
+			.uri("/courses/batch")
+			.bodyValue(courseCreateDTOs)
+			.exchange()
+			.expectStatus().isCreated
+	}
+
 }
