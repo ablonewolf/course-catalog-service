@@ -3,8 +3,10 @@ package org.ablonewolf.coursecatalogservice.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
+import org.ablonewolf.coursecatalogservice.model.dto.response.PageData
 import org.ablonewolf.coursecatalogservice.repository.CourseRepository
 import org.ablonewolf.coursecatalogservice.util.PostgresContainerInitializer
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer
@@ -155,6 +157,92 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 			.jsonPath("$.category").isEqualTo(createdCourse.category)
 			.jsonPath("$.description").isEqualTo(createdCourse.description)
 			.jsonPath("$.id").isEqualTo(createdCourse.id)
+	}
+
+	@Test
+	@Order(4)
+	fun test_getAllCoursesSuccess_WhenValidFiltersProvided_Returns200AndPaginatedCourses() {
+		// Arrange
+		val courseCreateDTOs = listOf<CourseCreateDTO>(
+			CourseCreateDTO(
+				name = "Java Basics",
+				category = "Programming",
+				description = "Learn Java fundamentals and core concepts"
+			),
+			CourseCreateDTO(
+				name = "Spring Boot",
+				category = "Framework",
+				description = "Build enterprise applications with Spring Boot"
+			),
+			CourseCreateDTO(
+				name = "React Fundamentals",
+				category = "Frontend",
+				description = "Master React components and state management"
+			),
+			CourseCreateDTO(
+				name = "Docker Essentials",
+				category = "DevOps",
+				description = "Containerize applications with Docker"
+			),
+			CourseCreateDTO(
+				name = "MySQL Database",
+				category = "Database",
+				description = "Database design and SQL queries with MySQL"
+			),
+			CourseCreateDTO(
+				name = "Python Programming",
+				category = "Programming",
+				description = "Master Python syntax and object-oriented programming"
+			),
+			CourseCreateDTO(
+				name = "Angular Framework",
+				category = "Frontend",
+				description = "Build dynamic web applications with Angular"
+			),
+			CourseCreateDTO(
+				name = "MongoDB Basics",
+				category = "Database",
+				description = "NoSQL database design and document operations"
+			),
+			CourseCreateDTO(
+				name = "Kubernetes Orchestration",
+				category = "DevOps",
+				description = "Container orchestration and cluster management"
+			),
+			CourseCreateDTO(
+				name = "Express.js API",
+				category = "Framework",
+				description = "Build RESTful APIs with Node.js and Express"
+			)
+		)
+
+		// save the items in the database
+		webTestClient.post()
+			.uri("/courses/batch")
+			.bodyValue(courseCreateDTOs)
+			.exchange()
+			.expectStatus().isCreated
+
+		// Act
+		val apiResult = webTestClient.get()
+			.uri("/courses?page=1&size=10")
+			.exchange()
+			.expectStatus().isOk
+			.expectBody()
+			.returnResult()
+
+		val pageData: PageData<CourseResponse> = objectMapper.readValue(
+			apiResult.responseBody,
+			objectMapper.typeFactory.constructParametricType(
+				PageData::class.java,
+				CourseResponse::class.java
+			)
+		)
+		val courses = pageData.contents
+
+		// Assert
+		Assertions.assertEquals(10, courses.size)
+		Assertions.assertEquals(courseCreateDTOs[0].name, courses[0].name)
 	}
 
 }
