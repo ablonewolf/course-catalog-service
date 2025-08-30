@@ -3,8 +3,10 @@ package org.ablonewolf.coursecatalogservice.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
+import org.ablonewolf.coursecatalogservice.repository.CourseRepository
 import org.ablonewolf.coursecatalogservice.util.PostgresContainerInitializer
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
@@ -25,6 +27,9 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 	lateinit var webTestClient: WebTestClient
 
 	@Autowired
+	lateinit var courseRepository: CourseRepository
+
+	@Autowired
 	private lateinit var objectMapper: ObjectMapper
 
 	companion object {
@@ -33,6 +38,13 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 		private lateinit var description: String
 		private lateinit var courseResponseDTO: CourseResponseDTO
 		private lateinit var courseCreateDTO: CourseCreateDTO
+
+		data class CourseResponse(
+			override val id: Int,
+			override val name: String,
+			override val category: String,
+			override val description: String
+		) : CourseResponseDTO
 
 		@JvmStatic
 		@BeforeAll
@@ -52,6 +64,11 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 				"Learn the nuts and bolts of Programming with Kotlin"
 			)
 		}
+	}
+
+	@BeforeEach
+	fun cleanUpDatabase() {
+		this.courseRepository.deleteAll()
 	}
 
 	@Test
@@ -122,13 +139,6 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 			.expectStatus().isCreated
 			.expectBody()
 			.returnResult()
-
-		data class CourseResponse(
-			override val id: Int,
-			override val name: String,
-			override val category: String,
-			override val description: String
-		) : CourseResponseDTO
 
 		val createdCourse = objectMapper.readValue(
 			createResponse.responseBody,
