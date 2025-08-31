@@ -1,10 +1,12 @@
 package org.ablonewolf.coursecatalogservice.model.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 
 @Entity
@@ -24,5 +26,8 @@ class Instructor(
 	var bio: String? = null,
 
 	@Column(name = "domain", nullable = false, length = 32)
-	var domain: String
+	var domain: String,
+
+	@OneToMany(mappedBy = "instructor", cascade = [CascadeType.ALL], orphanRemoval = true)
+	var courses: HashSet<Course> = HashSet()
 ) : BaseEntity()
