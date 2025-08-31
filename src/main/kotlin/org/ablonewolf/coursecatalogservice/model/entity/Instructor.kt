@@ -11,7 +11,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "instructors")
-class Instructor(
+final class Instructor(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	var id: Int? = null,
@@ -29,5 +29,5 @@ class Instructor(
 	var domain: String,
 
 	@OneToMany(mappedBy = "instructor", cascade = [CascadeType.ALL], orphanRemoval = true)
-	var courses: HashSet<Course> = HashSet()
+	var courses: Set<Course> = mutableSetOf()
 ) : BaseEntity()
