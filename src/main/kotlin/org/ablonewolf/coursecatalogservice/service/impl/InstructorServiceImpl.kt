@@ -40,4 +40,9 @@ class InstructorServiceImpl(private val instructorRepository: InstructorReposito
 			NotFoundException("Instructor with id $id not found")
 		}
 	}
+
+	override fun findMultipleInstructorsByIds(ids: List<Int>): Map<Int, Instructor> {
+		val instructors = this.instructorRepository.findAllById(ids)
+		return instructors.associateBy { it.id!! }
+	}
 }

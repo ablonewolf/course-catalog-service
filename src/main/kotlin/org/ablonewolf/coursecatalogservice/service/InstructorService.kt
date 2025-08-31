@@ -9,4 +9,6 @@ interface InstructorService {
 	fun createNewInstructor(instructorCreateDTO: InstructorCreateDTO): InstructorResponseDTO
 
 	fun findInstructorById(id: Int): Instructor
+
+	fun findMultipleInstructorsByIds(ids: List<Int>): Map<Int, Instructor>
 }
