@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface InstructorRepository : JpaRepository<Instructor, Int> {
+
+	fun findInstructorsByIdIn(ids: List<Int>): List<Instructor>
 }
