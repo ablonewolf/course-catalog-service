@@ -6,6 +6,7 @@ import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseUpdateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.PageData
+import org.ablonewolf.coursecatalogservice.model.entity.Instructor
 import org.ablonewolf.coursecatalogservice.service.CourseService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,8 +43,54 @@ class CourseControllerUnitTest {
 	private lateinit var courseResponseDTO: CourseResponseDTO
 	private val courseCreateDTOs = mutableListOf<CourseCreateDTO>()
 
+	private lateinit var instructorProgramming: Instructor
+	private lateinit var instructorFramework: Instructor
+	private lateinit var instructorFrontend: Instructor
+	private lateinit var instructorDatabase: Instructor
+	private lateinit var instructorDevOps: Instructor
+
 	@BeforeEach
 	fun setup() {
+		instructorProgramming = Instructor(
+			id = 1,
+			name = "Arif Rahman",
+			email = "arif.rahman+prog@ablonewolf.dev",
+			bio = "Senior engineer specializing in Kotlin, Java and Python; focuses on language fundamentals, OOP, and clean code.",
+			domain = "Programming"
+		)
+
+		instructorFramework = Instructor(
+			id = 2,
+			name = "Sophia Tanaka",
+			email = "sophia.tanaka+framework@ablonewolf.dev",
+			bio = "Full-stack dev building enterprise backends with Spring Boot and Node/Express; emphasizes REST, testing, and scalability.",
+			domain = "Framework"
+		)
+
+		instructorFrontend = Instructor(
+			id = 3,
+			name = "Lucas Meyer",
+			email = "lucas.meyer+frontend@ablonewolf.dev",
+			bio = "Frontend architect focused on React and Angular; contributor to UI libraries and state management patterns.",
+			domain = "Frontend"
+		)
+
+		instructorDatabase = Instructor(
+			id = 4,
+			name = "Dr. Ayesha Karim",
+			email = "ayesha.karim+db@ablonewolf.dev",
+			bio = "Database consultant with experience in MySQL and MongoDB; query optimization, schema design, and data modeling.",
+			domain = "Database"
+		)
+
+		instructorDevOps = Instructor(
+			id = 5,
+			name = "Miguel Santos",
+			email = "miguel.santos+devops@ablonewolf.dev",
+			bio = "Cloud-native DevOps engineer; Docker, Kubernetes, CI/CD pipelines, and container orchestration in production.",
+			domain = "DevOps"
+		)
+
 		name = "Kotlin Programming"
 		category = "Programming"
 		description = "Learn the nuts and bolts of Programming with Kotlin"
@@ -53,6 +100,8 @@ class CourseControllerUnitTest {
 			override val name = this@CourseControllerUnitTest.name
 			override val category = this@CourseControllerUnitTest.category
 			override val description = this@CourseControllerUnitTest.description
+			override val instructorId: Int? = instructorProgramming.id
+			override val instructorName: String? = instructorProgramming.name
 		}
 
 		courseCreateDTOs.addAll(
@@ -60,27 +109,32 @@ class CourseControllerUnitTest {
 				CourseCreateDTO(
 					name = "Java Basics",
 					category = "Programming",
-					description = "Learn Java fundamentals and core concepts"
+					description = "Learn Java fundamentals and core concepts",
+					instructorId = instructorProgramming.id
 				),
 				CourseCreateDTO(
 					name = "Spring Boot",
 					category = "Framework",
-					description = "Build enterprise applications with Spring Boot"
+					description = "Build enterprise applications with Spring Boot",
+					instructorId = instructorFramework.id
 				),
 				CourseCreateDTO(
 					name = "React Fundamentals",
 					category = "Frontend",
-					description = "Master React components and state management"
+					description = "Master React components and state management",
+					instructorId = instructorFrontend.id
 				),
 				CourseCreateDTO(
 					name = "Docker Essentials",
 					category = "DevOps",
-					description = "Containerize applications with Docker"
+					description = "Containerize applications with Docker",
+					instructorId = instructorDevOps.id
 				),
 				CourseCreateDTO(
 					name = "MySQL Database",
 					category = "Database",
-					description = "Database design and SQL queries with MySQL"
+					description = "Database design and SQL queries with MySQL",
+					instructorId = instructorDatabase.id
 				)
 			)
 		)
@@ -92,7 +146,8 @@ class CourseControllerUnitTest {
 		val courseCreateDTO = CourseCreateDTO(
 			name = name,
 			category = category,
-			description = description
+			description = description,
+			instructorId = instructorProgramming.id
 		)
 
 		whenever(courseService.createNewCourse(courseCreateDTO))
@@ -152,6 +207,8 @@ class CourseControllerUnitTest {
 			override val name = "Advanced Kotlin"
 			override val category = "Programming"
 			override val description = "Learn the nuts and bolts of Programming with Kotlin"
+			override val instructorId: Int? = instructorProgramming.id
+			override val instructorName: String? = instructorProgramming.name
 		}
 
 		whenever(courseService.updateCourse(any(), any()))
@@ -218,7 +275,8 @@ class CourseControllerUnitTest {
 		val invalidCourseCreateDTO = CourseCreateDTO(
 			name = "",  // Invalid: name is blank
 			category = category,
-			description = description
+			description = description,
+			instructorId = instructorProgramming.id
 		)
 
 		// Act & Assert
@@ -241,7 +299,8 @@ class CourseControllerUnitTest {
 		val invalidCourseCreateDTO = CourseCreateDTO(
 			name = name,
 			category = "",  // Invalid: category is blank
-			description = description
+			description = description,
+			instructorId = instructorProgramming.id
 		)
 
 		// Act & Assert
@@ -264,7 +323,8 @@ class CourseControllerUnitTest {
 		val invalidCourseCreateDTO = CourseCreateDTO(
 			name = name,
 			category = category,
-			description = "" // Invalid: description is blank
+			description = "", // Invalid: description is blank,
+			instructorId = instructorProgramming.id
 		)
 
 		// Act & Assert
