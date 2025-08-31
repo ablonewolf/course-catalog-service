@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(controllers = [InstructorController::class])
-class IntegrationControllerUnitTest {
+class InstructorControllerUnitTest {
 
 	@Autowired
 	private lateinit var mockMvc: MockMvc
