@@ -91,4 +91,52 @@ class InstructorControllerUnitTest {
 			.andExpect(jsonPath("$.bio").value(instructorResponse.bio))
 
 	}
+
+	@Test
+	fun test_createInstructorFailure_WhenEmptyNameProvided_ReturnsBadRequest() {
+		// Arrange
+		val invalidInstructorCreateDTO = InstructorCreateDTO(
+			name = "",  // Invalid: name is blank
+			email = email,
+			bio = bio,
+			domain = domain
+		)
+
+		// Act & Assert
+		mockMvc.perform(
+			post("/instructors")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(invalidInstructorCreateDTO))
+		)
+			.andExpect(status().isBadRequest)
+			.andExpect(jsonPath("$.errors").exists())
+			.andExpect(
+				jsonPath("$.errors['name']")
+					.value("Name cannot be empty")
+			)
+	}
+
+	@Test
+	fun test_createInstructorFailure_WhenInvalidEmailProvided_ReturnsBadRequest() {
+		// Arrange
+		val invalidInstructorCreateDTO = InstructorCreateDTO(
+			name = name,
+			email = name, // invalid email is provided
+			bio = bio,
+			domain = domain
+		)
+
+		// Act & Assert
+		mockMvc.perform(
+			post("/instructors")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(invalidInstructorCreateDTO))
+		)
+			.andExpect(status().isBadRequest)
+			.andExpect(jsonPath("$.errors").exists())
+			.andExpect(
+				jsonPath("$.errors['email']")
+					.value("Email should be a valid email address")
+			)
+	}
 }
