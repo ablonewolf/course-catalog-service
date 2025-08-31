@@ -9,38 +9,38 @@ import org.ablonewolf.coursecatalogservice.model.dto.response.PageData
 import org.ablonewolf.coursecatalogservice.model.entity.Course
 import org.ablonewolf.coursecatalogservice.repository.CourseRepository
 import org.ablonewolf.coursecatalogservice.service.CourseService
+import org.ablonewolf.coursecatalogservice.service.InstructorService
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
-class CourseServiceImpl(private val courseRepository: CourseRepository) : CourseService {
+class CourseServiceImpl(
+	private val courseRepository: CourseRepository,
+	private val instructorService: InstructorService
+) : CourseService {
 
 	companion object {
 		private val log = LoggerFactory.getLogger(CourseServiceImpl::class.java)
 	}
 
 	override fun createNewCourse(courseCreateDTO: CourseCreateDTO): CourseResponseDTO {
+		val instructor = instructorService.findInstructorById(courseCreateDTO.instructorId ?: 0)
 		val course = courseCreateDTO.let {
 			Course(
 				name = it.name,
 				category = it.category,
-				description = it.description
+				description = it.description,
+				instructor = instructor
 			)
 		}
 
 		courseRepository.save(course)
 		log.info("Created new course with name ${course.name}, its id is: ${course.id}")
 
-		return course.let {
-			object : CourseResponseDTO {
-				override val id: Int? = it.id
-				override val name: String? = it.name
-				override val category: String? = it.category
-				override val description: String? = it.description
-			}
-		}
+		return getCourseResponseFromEntity(course)
 	}
+
 
 	override fun getAllCourses(courseSearchDTO: CourseSearchDTO): PageData<CourseResponseDTO> {
 		val pageable = PageRequest.of(courseSearchDTO.pageNumber - 1, courseSearchDTO.pageSize)
@@ -65,24 +65,20 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 		courseRepository.save(existingCourse)
 		log.info("Updated course with id: $id")
 
-		return existingCourse.let { course ->
-			object : CourseResponseDTO {
-				override val id: Int? = course.id
-				override val name: String? = course.name
-				override val category: String? = course.category
-				override val description: String? = course.description
-			}
-		}
+		return getCourseResponseFromEntity(existingCourse)
 	}
 
 	override fun createMultipleCourses(courseCreateDTOs: List<CourseCreateDTO>) {
 		val createdCourses = mutableListOf<Course>()
+		val instructorIDs = courseCreateDTOs.map { it.instructorId }
+		val instructorMap = instructorService.findMultipleInstructorsByIds(instructorIDs.filterNotNull())
 
 		courseCreateDTOs.forEach {
 			val course = Course(
 				name = it.name,
 				category = it.category,
-				description = it.description
+				description = it.description,
+				instructor = instructorMap[it.instructorId]
 			)
 			createdCourses.add(course)
 		}
@@ -104,6 +100,17 @@ class CourseServiceImpl(private val courseRepository: CourseRepository) : Course
 		}
 		courseRepository.deleteById(id)
 		log.info("Deleted course with id: $id")
+	}
+
+	private fun getCourseResponseFromEntity(course: Course): CourseResponseDTO = course.let {
+		object : CourseResponseDTO {
+			override val id: Int? = it.id
+			override val name: String? = it.name
+			override val category: String? = it.category
+			override val description: String? = it.description
+			override val instructorId: Int? = it.instructor?.id
+			override val instructorName: String? = it.instructor?.name
+		}
 	}
 }
 

@@ -5,4 +5,6 @@ interface CourseResponseDTO {
     val name: String?
     val category: String?
     val description: String?
+    val instructorId: Int?
+    val instructorName: String?
 }

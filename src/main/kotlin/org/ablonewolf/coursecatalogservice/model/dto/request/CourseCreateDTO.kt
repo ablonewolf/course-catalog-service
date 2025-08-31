@@ -1,6 +1,7 @@
 package org.ablonewolf.coursecatalogservice.model.dto.request
 
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 data class CourseCreateDTO(
@@ -13,5 +14,8 @@ data class CourseCreateDTO(
     val category: String,
 
     @field:NotBlank(message = "Description cannot be empty")
-    val description: String
+    val description: String,
+
+    @field:NotNull(message = "Instructor ID cannot be null")
+    val instructorId: Int?
 )

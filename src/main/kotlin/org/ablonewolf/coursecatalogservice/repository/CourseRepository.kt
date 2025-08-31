@@ -19,8 +19,10 @@ interface CourseRepository : JpaRepository<Course, Int> {
         course.id AS id,
         course.name AS name,
         course.category AS category,
-        course.description AS description
-    FROM Course course
+        course.description AS description,
+		instructor.id AS instructorId,
+		instructor.name AS instructorName
+    FROM Course course INNER JOIN Instructor instructor ON course.instructor.id = instructor.id
     WHERE
         (:#{#searchDTO.name} IS NULL OR LOWER(course.name) LIKE CONCAT('%', LOWER(:#{#searchDTO.name}), '%'))
         AND (:#{#searchDTO.category} IS NULL OR 
@@ -36,8 +38,10 @@ interface CourseRepository : JpaRepository<Course, Int> {
         course.id AS id, 
         course.name AS name, 
         course.category AS category, 
-        course.description AS description 
-    FROM Course course
+        course.description AS description,
+		instructor.id AS instructorId,
+		instructor.name AS instructorName
+    FROM Course course INNER JOIN Instructor instructor ON course.instructor.id = instructor.id
     WHERE
         course.id = :id"""
 	)
