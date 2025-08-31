@@ -12,7 +12,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "courses")
-class Course(
+final class Course(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	var id: Int? = null,
