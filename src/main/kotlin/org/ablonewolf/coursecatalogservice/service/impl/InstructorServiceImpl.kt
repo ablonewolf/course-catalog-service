@@ -1,5 +1,6 @@
 package org.ablonewolf.coursecatalogservice.service.impl
 
+import org.ablonewolf.coursecatalogservice.exceptions.NotFoundException
 import org.ablonewolf.coursecatalogservice.model.dto.request.InstructorCreateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.request.InstructorResponseDTO
 import org.ablonewolf.coursecatalogservice.model.entity.Instructor
@@ -31,6 +32,12 @@ class InstructorServiceImpl(private val instructorRepository: InstructorReposito
 				override val domain: String? = it.domain
 				override val bio: String? = it.bio
 			}
+		}
+	}
+
+	override fun findInstructorById(id: Int): Instructor {
+		return this.instructorRepository.findById(id).orElseThrow {
+			NotFoundException("Instructor with id $id not found")
 		}
 	}
 }
