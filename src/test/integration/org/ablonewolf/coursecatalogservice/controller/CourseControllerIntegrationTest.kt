@@ -2,6 +2,7 @@ package org.ablonewolf.coursecatalogservice.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.ablonewolf.coursecatalogservice.model.dto.request.CourseCreateDTO
+import org.ablonewolf.coursecatalogservice.model.dto.request.CourseUpdateDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.CourseResponseDTO
 import org.ablonewolf.coursecatalogservice.model.dto.response.PageData
 import org.ablonewolf.coursecatalogservice.repository.CourseRepository
@@ -243,6 +244,53 @@ class CourseControllerIntegrationTest : PostgresContainerInitializer() {
 		// Assert
 		Assertions.assertEquals(10, courses.size)
 		Assertions.assertEquals(courseCreateDTOs[0].name, courses[0].name)
+	}
+
+	@Test
+	@Order(5)
+	fun test_courseUpdateSuccess_WhenValidIdAndUpdateDTOProvided_Returns200AndUpdatedCourse() {
+		// Arrange
+		val updatedName = "Kotlin Masterclass"
+		val updatedCategory = "Programming Language"
+		val updatedDescription = "Learn Kotlin from the very scratch and become a Kotlin expert with hands-on projects"
+
+		val createResponse = webTestClient.post()
+			.uri("/courses")
+			.bodyValue(courseCreateDTO)
+			.exchange()
+			.expectStatus().isCreated
+			.expectBody()
+			.returnResult()
+
+		val createdCourse = objectMapper.readValue(
+			createResponse.responseBody,
+			CourseResponse::class.java
+		)
+		val courseUpdateDTO = CourseUpdateDTO(
+			name = updatedName,
+			category = updatedCategory,
+			description = updatedDescription
+		)
+
+		// Act
+		val apiResult = webTestClient.put()
+			.uri("/courses/${createdCourse.id}")
+			.bodyValue(courseUpdateDTO)
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody()
+			.returnResult()
+
+		val updatedCourse = objectMapper.readValue(
+			apiResult.responseBody,
+			CourseResponse::class.java
+		)
+
+		// Assert
+		Assertions.assertEquals(createdCourse.id, updatedCourse.id)
+		Assertions.assertEquals(updatedName, updatedCourse.name)
+		Assertions.assertEquals(updatedCategory, updatedCourse.category)
+		Assertions.assertEquals(updatedDescription, updatedCourse.description)
 	}
 
 }
