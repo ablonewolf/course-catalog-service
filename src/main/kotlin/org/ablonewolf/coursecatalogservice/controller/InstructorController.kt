@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/instructors")
-@Validated
 class InstructorController(
 	private val instructorService: InstructorService,
 ) {
@@ -25,7 +24,7 @@ class InstructorController(
 
 	@PostMapping
 	@Operation(summary = "Add a new instructor")
-	fun createInstructor(@RequestBody instructorCreateDTO: InstructorCreateDTO):
+	fun createInstructor(@Validated @RequestBody instructorCreateDTO: InstructorCreateDTO):
 			ResponseEntity<InstructorResponseDTO> {
 		log.info("Creating new instructor with name ${instructorCreateDTO.name}")
 		val createdInstructor = instructorService.createNewInstructor(instructorCreateDTO)
