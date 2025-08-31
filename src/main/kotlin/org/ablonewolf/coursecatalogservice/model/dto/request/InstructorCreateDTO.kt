@@ -12,7 +12,7 @@ data class InstructorCreateDTO(
 
 	@field:NotBlank(message = "Email cannot be empty")
 	@field:Size(max = 128, message = "Email must be between 5 and 128 characters")
-	@field:Email
+	@field:Email(message = "Email should be a valid email address")
 	val email: String,
 
 	val bio: String?,
