@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.TestMethodOrder
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
@@ -35,7 +34,6 @@ class InstructorControllerIntegrationTest : PostgresContainerInitializer() {
 	private lateinit var objectMapper: ObjectMapper
 
 	companion object {
-		private val log = LoggerFactory.getLogger(InstructorControllerIntegrationTest::class.java)
 		private lateinit var name: String
 		private lateinit var email: String
 		private lateinit var bio: String
@@ -100,7 +98,6 @@ class InstructorControllerIntegrationTest : PostgresContainerInitializer() {
 			InstructorResponse::class.java
 		)
 
-		log.info("Created Instructor: $createdInstructor")
 		// Assert
 		Assertions.assertEquals(instructorResponse.id, createdInstructor.id)
 		Assertions.assertEquals(instructorResponse.name, createdInstructor.name)
