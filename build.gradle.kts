@@ -20,6 +20,8 @@ repositories {
     mavenCentral()
 }
 
+extra["testcontainers.version"] = "1.21.4"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
@@ -46,11 +48,8 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    // https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
-    testImplementation("org.testcontainers:junit-jupiter:1.21.3")
-
-    // https://mvnrepository.com/artifact/org.testcontainers/postgresql
-    testImplementation("org.testcontainers:postgresql:1.21.3")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
 }
 
 kotlin {
