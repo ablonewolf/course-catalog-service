@@ -20,7 +20,11 @@ repositories {
     mavenCentral()
 }
 
-extra["testcontainers.version"] = "1.21.4"
+dependencyManagement {
+    imports {
+        mavenBom("org.testcontainers:testcontainers-bom:1.21.4")
+    }
+}
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -48,7 +52,10 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    // https://mvnrepository.com/artifact/org.testcontainers/junit-jupiter
     testImplementation("org.testcontainers:junit-jupiter")
+
+    // https://mvnrepository.com/artifact/org.testcontainers/postgresql
     testImplementation("org.testcontainers:postgresql")
 }
 
