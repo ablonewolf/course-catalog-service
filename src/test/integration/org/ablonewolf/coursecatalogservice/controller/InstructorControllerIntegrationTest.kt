@@ -80,6 +80,7 @@ class InstructorControllerIntegrationTest : PostgresContainerInitializer() {
 	@BeforeEach
 	fun cleanUpDatabase() {
 		this.instructorRepository.deleteAll()
+		this.instructorRepository.resetIdSequence()
 	}
 
 	@Test
