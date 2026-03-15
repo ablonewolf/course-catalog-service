@@ -1,5 +1,6 @@
 package org.ablonewolf.coursecatalogservice.controller
 
+import org.ablonewolf.coursecatalogservice.util.PostgresContainerInitializer
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -7,11 +8,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import kotlin.test.Test
+import org.springframework.test.web.reactive.server.expectBody
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-class GreetingControllerIntegrationTest {
+class GreetingControllerIntegrationTest : PostgresContainerInitializer() {
 
     @Autowired
     lateinit var webTestClient: WebTestClient
@@ -25,7 +27,7 @@ class GreetingControllerIntegrationTest {
             .uri("/greetings?name=$name")
             .exchange()
             .expectStatus().isOk
-            .expectBody(String::class.java)
+            .expectBody<String>()
             .returnResult()
 
         Assertions.assertEquals(expectedMessage, result.responseBody)
